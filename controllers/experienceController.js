@@ -1,5 +1,19 @@
 // In-memory array to store experiences
-let experiences = [];
+let experiences = [
+  {
+    author: "Mateo",
+    text: "I had a really hard match yesterday, but what helped me the most was staying positive!",
+    category: "College Tournament",
+    added: new Date()
+  },
+  {
+    author: "Arthur",
+    text: "Tennis practice in the USA is not the same as in Brazil. We really need to practice extra to be able to keep up our level.",
+    category: "College Practice",
+    added: new Date()
+  }
+];
+
 
 // Function to fetch experiences (for the home page)
 function getHomePage(req, res) {
@@ -9,6 +23,11 @@ function getHomePage(req, res) {
 // Function to render the about page
 function getAboutPage(req, res) {
   res.render('about'); // Render the about page
+}
+
+// Function to render the submit experience form
+function getSubmitPage(req, res) {
+  res.render('submit'); // Render the submit page
 }
 
 // Function to handle new experience submission
@@ -32,5 +51,6 @@ function postNewExperience(req, res) {
 module.exports = {
   getHomePage,
   getAboutPage,
+  getSubmitPage, // Export the new function
   postNewExperience
 };
