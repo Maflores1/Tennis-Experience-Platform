@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/css/styles.css" />
+    <title>Tennis Experience Board</title>
+  </head>
+  <body>
+    <header>
+      <h1>Welcome to the Tennis Experience Board</h1>
+      <nav>
+        <a href="/">Home</a>
+        <a href="/about">About</a>
+        <a href="/submit">Submit Experience</a>
+      </nav>
+    </header>
+    <main>
+      <h2>Recent Experiences</h2>
+      <ul>
+        <% experiences.forEach(exp => { %>
+        <li>
+          <strong><%= exp.author %></strong> (<%= exp.category %>): <%= exp.text
+          %> <em>(Posted on <%= exp.added.toLocaleString() %>)</em>
+        </li>
+        <% }) %>
+      </ul>
+    </main>
+    <footer>
+      <p>&copy; 2025 Tennis Experience Board</p>
+    </footer>
+  </body>
+</html>
