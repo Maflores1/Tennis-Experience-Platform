@@ -3,12 +3,12 @@ const { Client } = require("pg");
 // Function to fetch messages from the database
 async function getHomePage(req, res) {
   const client = new Client({
-    connectionString: "postgresql://postgres:gonzalo08@localhost:5432/myTennis",
+    connectionString: "postgresql://postgres:postgres@localhost:5432/myTennis",
   });
 
   try {
     await client.connect();
-    const result = await client.query('SELECT * FROM tennis ORDER BY added DESC');
+    const result = await client.query('SELECT * FROM tennis ORDER BY added ASC');
     // Use 'experiences' as the variable name here to match your EJS view
     res.render('index', { title: 'Tennis Experience Board', experiences: result.rows });
   } catch (err) {
@@ -20,12 +20,6 @@ async function getHomePage(req, res) {
 
 };
 
-
-// Function to fetch experiences (for the home page)
-function getHomePage(req, res) {
-  res.render('index', { title: 'Tennis Experience Board', experiences }); // Render the home page with experiences
-
-}
 
 function getAboutPage(req, res) {
   res.render('about', { title: 'About Us' });
@@ -41,7 +35,7 @@ async function postNewExperience(req, res) {
   const { author, text, category } = req.body;
 
   const client = new Client({
-    connectionString: "postgresql://postgres:gonzalo08@localhost:5432/myTennis",
+    connectionString: "postgresql://postgres:postgres@localhost:5432/myTennis",
   });
 
   try {
