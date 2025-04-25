@@ -3,23 +3,25 @@
 const { Client } = require("pg");
 
 const SQL = `
-CREATE TABLE IF NOT EXISTS messages (
+CREATE TABLE IF NOT EXISTS tennis (
   id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+  author VARCHAR(255),
   text TEXT NOT NULL,
-  author VARCHAR ( 255 ),
+  category TEXT NOT NULL,
   added TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-INSERT INTO messages (text, author, added) 
+INSERT INTO tennis (author, text, category)
 VALUES
-  ('Hi there!', 'Amando', CURRENT_TIMESTAMP),
-  ('Hello World!', 'Charles', CURRENT_TIMESTAMP);
+  ('Mateo', 'I had a really hard match yesterday, but what helped me the most was staying positive!', 'College Tournament'),
+  ('Arthur', 'Tennis practice in the USA is not the same as in Brazil. We really need to practice extra to be able to keep up our level.', 'College Practice')
+ON CONFLICT DO NOTHING;
 `;
 
 async function main() {
   console.log("seeding...");
   const client = new Client({
-    connectionString: "postgresql://postgres:postgres@localhost:5432/myTennis",
+    connectionString: "postgresql://postgres:gonzalo08@localhost:5432/myTennis",
   });
   await client.connect();
   await client.query(SQL);

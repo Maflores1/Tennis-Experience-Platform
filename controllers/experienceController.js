@@ -1,56 +1,56 @@
-// In-memory array to store experiences
-let experiences = [
-  {
-    author: "Mateo",
-    text: "I had a really hard match yesterday, but what helped me the most was staying positive!",
-    category: "College Tournament",
-    added: new Date()
-  },
-  {
-    author: "Arthur",
-    text: "Tennis practice in the USA is not the same as in Brazil. We really need to practice extra to be able to keep up our level.",
-    category: "College Practice",
-    added: new Date()
+const { Client } = require("pg");
+
+// Function to fetch messages from the database
+async function getHomePage(req, res) {
+  const client = new Client({
+    connectionString: "postgresql://postgres:gonzalo08@localhost:5432/myTennis",
+  });
+
+  try {
+    await client.connect();
+    const result = await client.query('SELECT * FROM tennis ORDER BY added DESC');
+    // Use 'experiences' as the variable name here to match your EJS view
+    res.render('index', { title: 'Tennis Experience Board', experiences: result.rows });
+  } catch (err) {
+    console.error("Error fetching messages:", err);
+    res.render('index', { title: 'Tennis Experience Board', experiences: [] });
+  } finally {
+    await client.end();
   }
-];
-
-
-// Function to fetch experiences (for the home page)
-function getHomePage(req, res) {
-  res.render('index', { title: 'Tennis Experience Board', experiences }); // Render the home page with experiences
 }
 
-// Function to render the about page
 function getAboutPage(req, res) {
-  res.render('about'); // Render the about page
+  res.render('about', { title: 'About Us' });
 }
 
-// Function to render the submit experience form
+// Function to render the new message form
 function getSubmitPage(req, res) {
-  res.render('submit'); // Render the submit page
+  res.render('submit', { title: 'New Message' });
 }
 
-// Function to handle new experience submission
-function postNewExperience(req, res) {
-  const { author, text, category } = req.body; // Get data from the form
+// Function to handle new message submission
+async function postNewExperience(req, res) {
+  const { author, text, category } = req.body;
 
-  // Create a new experience object
-  const newExperience = {
-    author,
-    text,
-    category,
-    added: new Date() // Add a timestamp
-  };
+  const client = new Client({
+    connectionString: "postgresql://postgres:gonzalo08@localhost:5432/myTennis",
+  });
 
-  // Push the new experience to the in-memory array
-  experiences.push(newExperience);
+  try {
+    await client.connect();
+    await client.query('INSERT INTO tennis (author, text, category) VALUES ($1, $2, $3)', [author, text, category]);
+  } catch (err) {
+    console.error("Error inserting message:", err);
+  } finally {
+    await client.end();
+  }
 
-  res.redirect('/'); // Redirect to the home page after submission
+  res.redirect('/');
 }
 
 module.exports = {
   getHomePage,
   getAboutPage,
-  getSubmitPage, // Export the new function
+  getSubmitPage,
   postNewExperience
 };
