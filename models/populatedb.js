@@ -21,7 +21,7 @@ ON CONFLICT DO NOTHING;
 async function main() {
   console.log("seeding...");
   const client = new Client({
-    connectionString: "postgresql://postgres:gonzalo08@localhost:5432/myTennis",
+    connectionString: "postgresql://postgres:postgres@localhost:5432/myTennis",
   });
   await client.connect();
   await client.query(SQL);
