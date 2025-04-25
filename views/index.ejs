@@ -20,8 +20,7 @@
       <ul>
         <% experiences.forEach(exp => { %>
         <li>
-          <strong><%= exp.author %></strong> (<%= exp.category %>): <%= exp.text
-          %> <em>(Posted on <%= exp.added.toLocaleString() %>)</em>
+          <strong><%= exp.author %></strong> (<%= exp.category %>): <%= exp.text %> <em>(Posted on <%= exp.added.toLocaleString() %>)</em>
         </li>
         <% }) %>
       </ul>
