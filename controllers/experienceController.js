@@ -20,13 +20,6 @@ async function getHomePage(req, res) {
 
 };
 
-
-<<<<<<< HEAD
-=======
-// Function to fetch experiences (for the home page)
-
-
->>>>>>> ed89dc7ea62e149589a88caec8f5fdd3f8759d17
 function getAboutPage(req, res) {
   res.render('about', { title: 'About Us' });
 }

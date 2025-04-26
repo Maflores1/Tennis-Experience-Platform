@@ -1,5 +1,4 @@
 <!--Gonzalo-->
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -10,7 +9,7 @@
   </head>
   <body>
     <header>
-      <img src="/images/raider-flag.png" alt="Raider Logo">
+      <img src="/images/raider-flag.png" alt="Raider Logo" />
       <h1>Submit Your Tennis Experience</h1>
       <nav>
         <a href="/">Home</a>
@@ -22,13 +21,19 @@
       <form action="/experiences" method="POST">
         <label for="author">Your Name:</label>
         <input type="text" id="author" name="author" required />
-      
+
         <label for="text">Experience:</label>
         <textarea id="text" name="text" required></textarea>
-      
+
         <label for="category">Category:</label>
-        <input type="text" id="category" name="category" />
-      
+        <select id="category" name="category" required>
+          <option value="" disabled selected>Select a category</option>
+          <option value="College Tournament">College Tournament</option>
+          <option value="College Practice">College Practice</option>
+          <option value="College Tips">College Tips</option>
+          <option value="Other">Other</option>
+        </select>
+
         <button type="submit">Submit Experience</button>
       </form>
     </main>
