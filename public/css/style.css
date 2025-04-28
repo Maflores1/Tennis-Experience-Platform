@@ -145,6 +145,62 @@ form button:hover {
     background-color: #357abd;
 }
 
+/* Styles for the response form */
+.response-form {
+    display: none; /* Initially hide the response form */
+    max-width: 400px; /* Set a smaller max width */
+    margin-top: 1rem;
+    padding: 1rem; /* Adjust padding for a more compact look */
+    background-color: #f9f9f9; /* Optional: Different background color */
+    border: 1px solid #ddd; /* Optional: Border for better visibility */
+    border-radius: 4px; /* Rounded corners */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Optional: Shadow for depth */
+}
+
+/* Flexbox for the name input */
+.response-form .name-container {
+    display: flex; /* Use flexbox */
+    align-items: center; /* Center items vertically */
+    margin-bottom: 1rem; /* Space between fields */
+}
+
+.response-form label {
+    font-weight: bold; /* Keep label bold */
+    margin-right: 1rem; /* Space between label and input */
+    flex: 0 0 100px; /* Fixed width for the label */
+}
+
+.response-form input[type="text"] {
+    flex: 1; /* Allow input to take remaining space */
+    padding: 0.5rem; /* Smaller padding */
+    border: 1px solid #161111; /* Border color */
+    border-radius: 4px; /* Rounded corners */
+    font-size: 0.9rem; /* Smaller font size */
+}
+
+.response-form textarea {
+    width: 100%; /* Full width */
+    padding: 0.5rem; /* Smaller padding */
+    margin-bottom: 1rem; /* Space between fields */
+    border: 1px solid #161111; /* Border color */
+    border-radius: 4px; /* Rounded corners */
+    font-size: 0.9rem; /* Smaller font size */
+}
+
+.response-form button {
+    background-color: #a80000; /* Button color */
+    color: white; /* Text color */
+    padding: 0.5rem 1rem; /* Smaller button padding */
+    border: none; /* No border */
+    border-radius: 4px; /* Rounded corners */
+    font-size: 0.9rem; /* Smaller font size */
+    cursor: pointer; /* Pointer cursor */
+    transition: background-color 0.3s ease; /* Transition effect */
+}
+
+.response-form button:hover {
+    background-color: #357abd; /* Button hover color */
+}
 /* about page styles */
 main p {
     max-width: 800px;

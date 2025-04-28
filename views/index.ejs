@@ -5,10 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="/css/style.css" />
     <title>Tennis Experience Board</title>
+    <style>
+      .response-form {
+        display: none; /* Initially hide the response form */
+        margin-top: 1rem;
+      }
+    </style>
   </head>
   <body>
     <header>
-      <img src="/images/raider-flag.png" alt="Raider Logo">
+      <img src="/images/raider-flag.png" alt="Raider Logo" />
       <h1>Welcome to the Tennis Experience Board</h1>
       <nav>
         <a href="/">Home</a>
@@ -21,7 +27,42 @@
       <ul>
         <% experiences.forEach(exp => { %>
         <li>
-          <strong><%= exp.author %></strong> (<%= exp.category %>): <%= exp.text %> <em>(Posted on <%= exp.added.toLocaleString() %>)</em>
+          <strong><%= exp.author %></strong> (<%= exp.category %>): <%= exp.text
+          %> <em>(Posted on <%= exp.added.toLocaleString() %>)</em>
+
+          <!-- Responses Section -->
+          <h3>Responses:</h3>
+          <ul>
+            <% exp.responses.forEach(response => { %>
+            <li>
+              <strong><%= response.author %></strong>: <%= response.text %>
+              <em>(Posted on <%= response.added.toLocaleString() %>)</em>
+            </li>
+            <% }) %>
+          </ul>
+
+          <!-- Toggle Button for Response Form -->
+          <button class="toggle-response-form">Reply</button>
+
+          <!-- Response Form -->
+          <form class="response-form" action="/responses" method="POST">
+            <input type="hidden" name="experience_id" value="<%= exp.id %>" />
+
+            <div class="name-container">
+              <label for="responseAuthor">Your Name:</label>
+              <input
+                type="text"
+                id="responseAuthor"
+                name="responseAuthor"
+                required
+              />
+            </div>
+
+            <label for="responseText">Your Response:</label>
+            <textarea id="responseText" name="responseText" required></textarea>
+
+            <button type="submit">Submit Response</button>
+          </form>
         </li>
         <% }) %>
       </ul>
@@ -29,5 +70,31 @@
     <footer>
       <p>&copy; 2025 Tennis Experience Board</p>
     </footer>
+
+    <script>
+      //Script to toggle the response form visibility
+      document.querySelectorAll(".toggle-response-form").forEach((button) => {
+        button.addEventListener("click", function () {
+          const form = this.nextElementSibling; // Get the next sibling (the form)
+          if (form.style.display === "none" || form.style.display === "") {
+            form.style.display = "block"; // Show the form
+            this.textContent = "Hide"; // Change button text to "Hide"
+          } else {
+            form.style.display = "none"; // Hide the form
+            this.textContent = "Reply"; // Change button text back to "Reply"
+          }
+        });
+      });
+
+      // Hide the response form after submission
+      document.querySelectorAll(".response-form").forEach((form) => {
+        form.addEventListener("submit", function (event) {
+          // Hide the form after submission
+          this.style.display = "none"; // Hide the form
+          const button = this.previousElementSibling; // Get the toggle button
+          button.textContent = "Reply"; // Change button text back to "Reply"
+        });
+      });
+    </script>
   </body>
 </html>
