@@ -157,3 +157,14 @@ main p {
     color: #2c3e50;
     font-size: 1.1rem;
 }
+
+/* Footer styles */
+footer {
+    text-align: center;
+    padding: 1rem;
+    margin-top: 2rem;
+}
+
+footer p {
+    margin: 0;
+}
