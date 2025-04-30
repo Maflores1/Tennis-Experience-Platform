@@ -30,8 +30,8 @@ Follow these steps to set up the project locally:
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/yourusername/tennis-experience-board.git
-   cd tennis-experience-board
+   git clone https://github.com/CSC220-WebDev-2025/webdev-final-project-tennis.git
+   cd webdev-final-project-tennis
 
 Install dependencies: Make sure you have Node.js and npm installed. Then run:
 npm install
