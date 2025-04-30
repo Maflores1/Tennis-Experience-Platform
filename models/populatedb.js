@@ -1,7 +1,9 @@
 #! /usr/bin/env node
 
+// Import the Client class from the 'pg' module to interact with PostgreSQL
 const { Client } = require("pg");
 
+// SQL commands to create tables and insert initial data
 const SQL = `
 CREATE TABLE IF NOT EXISTS tennis (
   id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
@@ -33,15 +35,24 @@ VALUES
 ON CONFLICT DO NOTHING;
 `;
 
+// Main function to execute the SQL commands
 async function main() {
-  console.log("seeding...");
+  console.log("seeding..."); // Log a message indicating the seeding process has started
   const client = new Client({
-    connectionString: "postgresql://postgres:postgres@localhost:5432/myTennis",
+    connectionString: "postgresql://postgres:postgres@localhost:5432/myTennis", // Connection string for the database
   });
+  
+  // Connect to the PostgreSQL database
   await client.connect();
+  
+  // Execute the SQL commands to create tables and insert data
   await client.query(SQL);
+  
+  // Close the database connection
   await client.end();
-  console.log("done");
+  
+  console.log("done"); // Log a message indicating the seeding process is complete
 }
 
+// Call the main function to run the script
 main();
