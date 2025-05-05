@@ -1,4 +1,4 @@
-# Tennis Experience Board
+# Tennis Experience Board 🎾
 
 Welcome to the Tennis Experience Board! This web application allows users to share their tennis experiences, read others' experiences, and respond to them. It is built using Node.js, Express, and PostgreSQL.
 
@@ -30,7 +30,7 @@ Follow these steps to set up the project locally:
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/CSC220-WebDev-2025/webdev-final-project-tennis.git
+   https://github.com/Maflores1/Tennis-Experience-Platform.git
    cd webdev-final-project-tennis
 
 Install dependencies: Make sure you have Node.js and npm installed. Then run:
@@ -39,7 +39,7 @@ npm install
 Set up the PostgreSQL database:
 - Ensure you have PostgreSQL installed and running.
 - Create a new database: myTennis;
-- Then run node models/populatedb.js to connect to the database
+- Then run node models/populatedb.js to connect to the database and to seed the it with initial data:
 
 ## Usage
 Start the server:
