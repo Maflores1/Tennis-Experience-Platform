@@ -1,11 +1,12 @@
 // Import the Client class from the 'pg' module to interact with PostgreSQL
 const { Client } = require("pg");
+require('dotenv').config(); // Load environment variables from .env file
 
 // Function to fetch messages and their responses from the database
 async function getHomePage(req, res) {
   // Create a new client instance to connect to the PostgreSQL database
   const client = new Client({
-    connectionString: "postgresql://postgres:postgres@localhost:5432/myTennis", // Connection string for the database
+    connectionString: process.env.DATABASE_URL, // Use the DATABASE_URL from the .env file
   });
 
   try {
@@ -52,7 +53,7 @@ async function postNewExperience(req, res) {
 
   // Create a new client instance to connect to the PostgreSQL database
   const client = new Client({
-    connectionString: "postgresql://postgres:postgres@localhost:5432/myTennis", // Connection string for the database
+    connectionString: process.env.DATABASE_URL, // Use the DATABASE_URL from the .env file
   });
 
   try {
@@ -78,7 +79,7 @@ async function postResponse(req, res) {
 
   // Create a new client instance to connect to the PostgreSQL database
   const client = new Client({
-    connectionString: "postgresql://postgres:postgres@localhost:5432/myTennis", // Connection string for the database
+    connectionString: process.env.DATABASE_URL, // Use the DATABASE_URL from the .env file
   });
 
   try {

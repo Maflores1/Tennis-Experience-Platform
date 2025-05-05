@@ -2,6 +2,7 @@
 
 // Import the Client class from the 'pg' module to interact with PostgreSQL
 const { Client } = require("pg");
+require('dotenv').config(); // Load environment variables from .env file
 
 // SQL commands to create tables and insert initial data
 const SQL = `
@@ -39,7 +40,7 @@ ON CONFLICT DO NOTHING;
 async function main() {
   console.log("seeding..."); // Log a message indicating the seeding process has started
   const client = new Client({
-    connectionString: "postgresql://postgres:postgres@localhost:5432/myTennis", // Connection string for the database
+    connectionString: process.env.DATABASE_URL, // Use the DATABASE_URL from the .env file
   });
   
   // Connect to the PostgreSQL database
