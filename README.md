@@ -1,4 +1,5 @@
-# Tennis Experience Board 🎾 - Working on improvements, login/accounts
+# Tennis Experience Board 🎾 
+- Working on improvements, login/accounts
 
 Welcome to the Tennis Experience Board! This web application allows users to share their tennis experiences, read others' experiences, and respond to them. It is built using Node.js, Express, and PostgreSQL.
 
