@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <title>Register - Tennis Experience Board</title>
+  </head>
+  <body>
+    <header>
+      <img src="/images/raider-flag.png" alt="Raider Logo" />
+      <h1>Join the Tennis Experience Board</h1>
+      <nav>
+        <a href="/">Home</a>
+        <% if (user) { %>
+        <a href="/submit">Submit Experience</a>
+        <a href="/profile">My Profile</a>
+        <span style="color: white; margin-right: 1rem"
+          >Welcome, <%= user.username %>!</span
+        >
+        <form action="/logout" method="POST" style="display: inline">
+          <button
+            type="submit"
+            style="
+              background: #a80000;
+              border: 1px solid white;
+              color: white;
+              padding: 0.5rem 1rem;
+              cursor: pointer;
+              border-radius: 4px;
+              margin-bottom: 2rem;
+            "
+          >
+            Logout
+          </button>
+        </form>
+        <% } else { %>
+        <a href="/login">Login</a>
+        <a href="/register">Register</a>
+        <% } %>
+      </nav>
+    </header>
+    <main>
+      <!-- Error Message -->
+      <% if (error) { %>
+      <div class="error-message">
+        <p><%= error %></p>
+      </div>
+      <% } %>
+
+      <form action="/register" method="POST" id="registerForm">
+        <h2 style="text-align: center; color: #a80000; margin-bottom: 2rem">
+          Create Your Account
+        </h2>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem">
+          <div>
+            <label for="firstName">First Name:</label>
+            <input
+              type="text"
+              id="firstName"
+              name="firstName"
+              required
+              placeholder="Your first name"
+              autocomplete="given-name"
+            />
+          </div>
+
+          <div>
+            <label for="lastName">Last Name:</label>
+            <input
+              type="text"
+              id="lastName"
+              name="lastName"
+              required
+              placeholder="Your last name"
+              autocomplete="family-name"
+            />
+          </div>
+        </div>
+
+        <label for="username">Username:</label>
+        <input
+          type="text"
+          id="username"
+          name="username"
+          required
+          minlength="3"
+          placeholder="Choose a unique username"
+          autocomplete="username"
+        />
+        <small style="color: #666; font-size: 0.9em"
+          >Must be at least 3 characters long</small
+        >
+
+        <label for="email">Email:</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          required
+          placeholder="your.email@example.com"
+          autocomplete="email"
+        />
+
+        <label for="university">University (optional):</label>
+        <input
+          type="text"
+          id="university"
+          name="university"
+          placeholder="Your university or tennis academy"
+        />
+
+        <label for="password">Password:</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          required
+          minlength="6"
+          placeholder="Create a strong password"
+          autocomplete="new-password"
+        />
+        <small style="color: #666; font-size: 0.9em"
+          >Must be at least 6 characters long</small
+        >
+
+        <label for="confirmPassword">Confirm Password:</label>
+        <input
+          type="password"
+          id="confirmPassword"
+          name="confirmPassword"
+          required
+          placeholder="Confirm your password"
+          autocomplete="new-password"
+        />
+
+        <div
+          class="password-strength"
+          id="passwordStrength"
+          style="margin-bottom: 1rem"
+        ></div>
+
+        <button type="submit">Create Account</button>
+      </form>
+
+      <div class="auth-links">
+        <p class="auth-link">
+          Already have an account? <a href="/login">Login here</a>
+        </p>
+        <p class="auth-link">
+          <a href="/">← Back to Home</a>
+        </p>
+      </div>
+
+      <div
+        class="info-box"
+        style="
+          margin-top: 2rem;
+          padding: 1rem;
+          background-color: #e8f4f8;
+          border-radius: 8px;
+          border-left: 4px solid #a80000;
+        "
+      >
+        <h3 style="margin-top: 0; color: #a80000">
+          Join Our Tennis Community!
+        </h3>
+        <p>
+          Share your tennis experiences, connect with other players, and learn
+          from the community. Whether you're playing college tennis,
+          participating in tournaments, or just practicing, your experiences can
+          help others!
+        </p>
+      </div>
+    </main>
+    <footer>
+      <p>
+        &copy; 2025 Tennis Experience Board - Connecting International Tennis
+        Players
+      </p>
+    </footer>
+
+    <script>
+      // Form validation and password strength checker
+      document
+        .getElementById("registerForm")
+        .addEventListener("submit", function (e) {
+          const password = document.getElementById("password").value;
+          const confirmPassword =
+            document.getElementById("confirmPassword").value;
+          const username = document.getElementById("username").value.trim();
+          const email = document.getElementById("email").value.trim();
+          const firstName = document.getElementById("firstName").value.trim();
+          const lastName = document.getElementById("lastName").value.trim();
+
+          // Basic validation
+          if (
+            !username ||
+            !email ||
+            !password ||
+            !confirmPassword ||
+            !firstName ||
+            !lastName
+          ) {
+            e.preventDefault();
+            alert("Please fill in all required fields.");
+            return false;
+          }
+
+          if (username.length < 3) {
+            e.preventDefault();
+            alert("Username must be at least 3 characters long.");
+            return false;
+          }
+
+          if (password.length < 6) {
+            e.preventDefault();
+            alert("Password must be at least 6 characters long.");
+            return false;
+          }
+
+          if (password !== confirmPassword) {
+            e.preventDefault();
+            alert("Passwords do not match.");
+            return false;
+          }
+
+          // Email validation
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          if (!emailRegex.test(email)) {
+            e.preventDefault();
+            alert("Please enter a valid email address.");
+            return false;
+          }
+        });
+
+      // Password strength indicator
+      document
+        .getElementById("password")
+        .addEventListener("input", function () {
+          const password = this.value;
+          const strengthDiv = document.getElementById("passwordStrength");
+
+          if (password.length === 0) {
+            strengthDiv.innerHTML = "";
+            return;
+          }
+
+          let strength = 0;
+          let feedback = [];
+
+          if (password.length >= 6) strength++;
+          else feedback.push("At least 6 characters");
+
+          if (/[a-z]/.test(password)) strength++;
+          else feedback.push("Lowercase letter");
+
+          if (/[A-Z]/.test(password)) strength++;
+          else feedback.push("Uppercase letter");
+
+          if (/[0-9]/.test(password)) strength++;
+          else feedback.push("Number");
+
+          if (/[^A-Za-z0-9]/.test(password)) strength++;
+          else feedback.push("Special character");
+
+          const strengthLevels = [
+            "Very Weak",
+            "Weak",
+            "Fair",
+            "Good",
+            "Strong",
+          ];
+          const strengthColors = [
+            "#ff4444",
+            "#ff8844",
+            "#ffaa44",
+            "#88aa44",
+            "#44aa44",
+          ];
+
+          strengthDiv.innerHTML = `
+          <div style="color: ${
+            strengthColors[strength - 1]
+          }; font-size: 0.9em; margin-bottom: 0.5rem;">
+            Password Strength: ${strengthLevels[strength - 1] || "Very Weak"}
+          </div>
+          ${
+            feedback.length > 0
+              ? `<div style="font-size: 0.8em; color: #666;">Add: ${feedback.join(
+                  ", "
+                )}</div>`
+              : ""
+          }
+        `;
+        });
+
+      // Confirm password validation
+      document
+        .getElementById("confirmPassword")
+        .addEventListener("input", function () {
+          const password = document.getElementById("password").value;
+          const confirmPassword = this.value;
+
+          if (confirmPassword && password !== confirmPassword) {
+            this.setCustomValidity("Passwords do not match");
+            this.style.borderColor = "#ff4444";
+          } else {
+            this.setCustomValidity("");
+            this.style.borderColor = "";
+          }
+        });
+    </script>
+  </body>
+</html>

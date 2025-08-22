@@ -1,109 +1,153 @@
-// Import the Client class from the 'pg' module to interact with PostgreSQL
-const { Client } = require("pg");
+// Import the Pool class from the 'pg' module to interact with PostgreSQL
+const { Pool } = require("pg");
 require('dotenv').config(); // Load environment variables from .env file
+
+// Create a new pool instance for managing database connections
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL, // Use the DATABASE_URL from the .env file
+});
 
 // Function to fetch messages and their responses from the database
 async function getHomePage(req, res) {
-  // Create a new client instance to connect to the PostgreSQL database
-  const client = new Client({
-    connectionString: process.env.DATABASE_URL, // Use the DATABASE_URL from the .env file
-  });
-
   try {
-    // Connect to the database
-    await client.connect();
-    
-    // Fetch all experiences from the 'tennis' table, ordered by the date they were added (ascending)
-    const experiencesResult = await client.query('SELECT * FROM tennis ORDER BY added ASC');
-    const experiences = experiencesResult.rows; // Store the fetched experiences in a variable
+    // Enhanced query to get user information with experiences
+    const experiencesResult = await pool.query(`
+      SELECT t.*, u.username as user_username, u.first_name, u.last_name, u.university
+      FROM tennis t
+      LEFT JOIN users u ON t.user_id = u.id
+      ORDER BY t.added DESC
+    `);
+    const experiences = experiencesResult.rows;
 
-    // Loop through each experience to fetch its responses
+    // Get responses for each experience with user information
     for (let exp of experiences) {
-      // Fetch responses for the current experience, ordered by the date they were added (ascending)
-      const responsesResult = await client.query('SELECT * FROM responses WHERE experience_id = $1 ORDER BY added ASC', [exp.id]);
-      exp.responses = responsesResult.rows; // Add the fetched responses to the current experience
+      const responsesResult = await pool.query(`
+        SELECT r.*, u.username as user_username, u.first_name, u.last_name
+        FROM responses r
+        LEFT JOIN users u ON r.user_id = u.id
+        WHERE r.experience_id = $1
+        ORDER BY r.added ASC
+      `, [exp.id]);
+      exp.responses = responsesResult.rows;
     }
 
-    // Render the 'index' view and pass the experiences to it
-    res.render('index', { title: 'Tennis Experience Board', experiences });
+    res.render('index', { 
+      title: 'Tennis Experience Board', 
+      experiences,
+      user: req.user || null // Passport.js provides req.user
+    });
   } catch (err) {
-    // If there's an error, log it to the console
     console.error("Error fetching messages:", err);
-    // Render the 'index' view with an empty experiences array
-    res.render('index', { title: 'Tennis Experience Board', experiences: [] });
-  } finally {
-    // Close the database connection
-    await client.end();
+    res.render('index', { 
+      title: 'Tennis Experience Board', 
+      experiences: [],
+      user: req.user || null
+    });
   }
 }
 
-// Function to render the About Us page
-function getAboutPage(req, res) {
-  res.render('about', { title: 'About Us' }); // Render the 'about' view
-}
 
 // Function to render the new message submission form
 function getSubmitPage(req, res) {
-  res.render('submit', { title: 'New Message' }); // Render the 'submit' view
+  // Check if user is authenticated (Passport.js way)
+  if (!req.isAuthenticated()) {
+    return res.redirect('/login');
+  }
+
+  res.render('submit', { 
+    title: 'New Message',
+    user: req.user
+  });
 }
 
 // Function to handle new message submission
 async function postNewExperience(req, res) {
-  const { author, text, category } = req.body;
-
-  // Create a new client instance to connect to the PostgreSQL database
-  const client = new Client({
-    connectionString: process.env.DATABASE_URL, // Use the DATABASE_URL from the .env file
-  });
-
-  try {
-    // Connect to the database
-    await client.connect();
-    // Insert the new experience into the 'tennis' table
-    await client.query('INSERT INTO tennis (author, text, category) VALUES ($1, $2, $3)', [author, text, category]);
-  } catch (err) {
-    // If there's an error, log it to the console
-    console.error("Error inserting message:", err);
-  } finally {
-    // Close the database connection
-    await client.end();
+  // Check if user is authenticated (Passport.js way)
+  if (!req.isAuthenticated()) {
+    return res.redirect('/login');
   }
 
-  // Redirect the user back to the home page after submission
-  res.redirect('/');
+  const { text, category } = req.body;
+  const userId = req.user.id;
+  const author = req.user.username; // Get the logged-in user's username
+
+  try {
+    await pool.query(
+      'INSERT INTO tennis (author, text, category, user_id) VALUES ($1, $2, $3, $4)', 
+      [author, text, category, userId]
+    );
+    console.log("New experience added successfully by user:", author);
+    res.redirect('/');
+  } catch (err) {
+    console.error("Error inserting message:", err);
+    res.redirect('/submit');
+  }
 }
 
 // Function to handle responses to experiences
 async function postResponse(req, res) {
-  const { experience_id, responseAuthor, responseText } = req.body;
-
-  // Create a new client instance to connect to the PostgreSQL database
-  const client = new Client({
-    connectionString: process.env.DATABASE_URL, // Use the DATABASE_URL from the .env file
-  });
-
-  try {
-    // Connect to the database
-    await client.connect();
-    // Insert the new response into the 'responses' table
-    await client.query('INSERT INTO responses (experience_id, author, text) VALUES ($1, $2, $3)', [experience_id, responseAuthor, responseText]);
-  } catch (err) {
-    // If there's an error, log it to the console
-    console.error("Error inserting response:", err);
-  } finally {
-    // Close the database connection
-    await client.end();
+  // Check if user is authenticated (Passport.js way)
+  if (!req.isAuthenticated()) {
+    return res.redirect('/login');
   }
 
-  // Redirect the user back to the home page after submitting the response
-  res.redirect('/');
+  const { experience_id, responseText } = req.body;
+  const userId = req.user.id;
+  const responseAuthor = req.user.username; // Get the logged-in user's username
+
+  try {
+    await pool.query(
+      'INSERT INTO responses (experience_id, author, text, user_id) VALUES ($1, $2, $3, $4)', 
+      [experience_id, responseAuthor, responseText, userId]
+    );
+    console.log("Response added successfully by user:", responseAuthor);
+    res.redirect('/');
+  } catch (err) {
+    console.error("Error inserting response:", err);
+    res.redirect('/');
+  }
+}
+
+// Function to get user profile page
+async function getUserProfile(req, res) {
+  if (!req.isAuthenticated()) {
+    return res.redirect('/login');
+  }
+
+  try {
+    // Get user's experiences
+    const experiencesResult = await pool.query(
+      'SELECT * FROM tennis WHERE user_id = $1 ORDER BY added DESC',
+      [req.user.id]
+    );
+
+    // Get user's responses
+    const responsesResult = await pool.query(`
+      SELECT r.*, t.text as experience_text, t.category, t.author as exp_author
+      FROM responses r 
+      JOIN tennis t ON r.experience_id = t.id 
+      WHERE r.user_id = $1 
+      ORDER BY r.added DESC
+    `, [req.user.id]);
+
+    res.render('profile', {
+      title: 'My Profile',
+      user: req.user,
+      experiences: experiencesResult.rows,
+      responses: responsesResult.rows
+    });
+
+  } catch (err) {
+    console.error("Error fetching user profile:", err);
+    res.redirect('/');
+  }
 }
 
 // Export the functions so they can be used in other parts of the application
 module.exports = {
   getHomePage,
-  getAboutPage,
   getSubmitPage,
   postNewExperience,
-  postResponse
+  postResponse,
+  getUserProfile
 };

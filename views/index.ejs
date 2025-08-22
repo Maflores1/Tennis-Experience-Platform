@@ -7,81 +7,484 @@
     <title>Tennis Experience Board</title>
     <style>
       .response-form {
-        display: none; /* Initially hide the response form */
+        display: none;
         margin-top: 1rem;
+      }
+      .success-message,
+      .error-message {
+        padding: 1rem;
+        margin: 1rem 0;
+        border-radius: 4px;
+        text-align: center;
+      }
+      .success-message {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+      }
+      .error-message {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+      }
+
+      /* Founder Section Styles */
+      .founder-section {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        padding: 3rem 2rem;
+        margin: 2rem 0;
+        border-radius: 8px;
+        border: 1px solid #dee2e6;
+      }
+
+      .founder-content {
+        max-width: 1000px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+        flex-wrap: wrap;
+      }
+
+      .founder-image {
+        flex: 0 0 200px;
+        text-align: center;
+      }
+
+      .founder-image img {
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid #a80000;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .founder-image .placeholder {
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        background: #6c757d;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1rem;
+        text-align: center;
+        margin: 0 auto;
+        border: 4px solid #a80000;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .founder-text {
+        flex: 1;
+        min-width: 300px;
+      }
+
+      .founder-text h3 {
+        color: #a80000;
+        font-size: 1.8rem;
+        margin-bottom: 1rem;
+        font-weight: bold;
+      }
+
+      .founder-text p {
+        font-size: 1.1rem;
+        line-height: 1.6;
+        color: #333;
+        margin-bottom: 1rem;
+      }
+
+      .founder-text .highlight {
+        color: #a80000;
+        font-weight: bold;
+      }
+
+      @media (max-width: 768px) {
+        .founder-content {
+          flex-direction: column;
+          text-align: center;
+        }
+
+        .founder-image {
+          flex: none;
+        }
+      }
+
+      /* Limited experiences message */
+      .limited-experiences-message {
+        background: #fff3cd;
+        border: 1px solid #ffeaa7;
+        color: #856404;
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin: 2rem 0;
+        text-align: center;
+      }
+
+      .limited-experiences-message h4 {
+        margin: 0 0 1rem 0;
+        color: #a80000;
+      }
+
+      .see-more-btn {
+        display: inline-block;
+        background: #a80000;
+        color: white;
+        padding: 0.8rem 2rem;
+        text-decoration: none;
+        border-radius: 6px;
+        font-weight: bold;
+        margin: 1rem 0.5rem;
+        transition: background-color 0.3s ease;
+      }
+
+      .see-more-btn:hover {
+        background: #800000;
+      }
+
+      .see-more-btn.secondary {
+        background: transparent;
+        color: #a80000;
+        border: 2px solid #a80000;
+      }
+
+      .see-more-btn.secondary:hover {
+        background: #a80000;
+        color: white;
       }
     </style>
   </head>
   <body>
     <header>
       <img src="/images/raider-flag.png" alt="Raider Logo" />
-      <h1>Welcome to the Tennis Experience Board</h1>
+      <h1>Tennis Experience Board</h1>
       <nav>
         <a href="/">Home</a>
-        <a href="/about">About</a>
+        <% if (user) { %>
         <a href="/submit">Submit Experience</a>
+        <a href="/profile">My Profile</a>
+        <span style="color: white; margin-right: 1rem"
+          >Welcome, <%= user.username %>!</span
+        >
+        <form action="/logout" method="POST" style="display: inline">
+          <button
+            type="submit"
+            style="
+              background: #a80000;
+              border: 1px solid white;
+              color: white;
+              padding: 0.5rem 1rem;
+              cursor: pointer;
+              border-radius: 4px;
+              margin-bottom: 2rem;
+            "
+          >
+            Logout
+          </button>
+        </form>
+        <% } else { %>
+        <a href="/login">Login</a>
+        <a href="/register">Register</a>
+        <% } %>
       </nav>
     </header>
+
     <main>
-      <h2>Recent Experiences</h2>
-      <ul>
-        <% experiences.forEach(exp => { %>
-        <li>
-          <strong><%= exp.author %></strong> (<%= exp.category %>): <%= exp.text
-          %> <em>(Posted on <%= exp.added.toLocaleString() %>)</em>
+      <!-- Show success/error messages -->
+      <% if (typeof success !== 'undefined' && success) { %>
+      <div class="success-message"><%= success %></div>
+      <% } %> <% if (typeof error !== 'undefined' && error) { %>
+      <div class="error-message"><%= error %></div>
+      <% } %>
 
-          <!-- Responses Section -->
-          <h3>Responses:</h3>
-          <ul>
-            <% exp.responses.forEach(response => { %>
-            <li>
-              <strong><%= response.author %></strong>: <%= response.text %>
-              <em>(Posted on <%= response.added.toLocaleString() %>)</em>
-            </li>
-            <% }) %>
-          </ul>
+      <!-- Hero Section -->
+      <section class="hero-section">
+        <div class="hero-content">
+          <!-- Team Picture (outside colored background) -->
+          <div class="team-image">
+            <!-- Replace this placeholder with your actual team image -->
+            <img src="/images/tennisTeam.jpg" alt="Tennis Team" />
+          </div>
 
-          <!-- Toggle Button for Response Form -->
-          <button class="toggle-response-form">Reply</button>
-
-          <!-- Response Form -->
-          <form class="response-form" action="/responses" method="POST">
-            <input type="hidden" name="experience_id" value="<%= exp.id %>" />
-
-            <div class="name-container">
-              <label for="responseAuthor">Your Name:</label>
-              <input
-                type="text"
-                id="responseAuthor"
-                name="responseAuthor"
-                required
-              />
+          <!-- Main content in two columns with background -->
+          <div class="hero-main-content">
+            <div class="journey-section">
+              <h2>Share Your Tennis Journey</h2>
+              <p class="hero-description">
+                Welcome to the Tennis Experience Board - a platform designed
+                specifically for international tennis players in the USA.
+                Whether you're competing in college tournaments, adapting to new
+                practice styles, or navigating the challenges of playing tennis
+                in a new country, this is your space to share experiences, learn
+                from others, and grow together.
+              </p>
             </div>
 
-            <label for="responseText">Your Response:</label>
-            <textarea id="responseText" name="responseText" required></textarea>
+            <div class="mission-section">
+              <h3>Our Mission</h3>
+              <p>
+                We believe that every tennis player's journey is unique,
+                especially for international students adapting to American
+                college tennis. By sharing our experiences - both triumphs and
+                challenges - we create a supportive community where everyone can
+                learn, improve, and feel less alone in their tennis journey.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
 
-            <button type="submit">Submit Response</button>
-          </form>
-        </li>
-        <% }) %>
-      </ul>
+      <!-- Get to Know the Founder Section -->
+      <% if (!user) { %>
+      <section class="founder-section">
+        <div class="founder-content">
+          <div class="founder-image">
+            <!-- Replace this placeholder with your actual image -->
+            <!-- <img src="/images/mateo-founder.jpg" alt="Mateo Flores - Founder" /> -->
+            <img src="/images/mateo-founder.jpg" alt="Mateo Flores - Founder" />
+          </div>
+          <div class="founder-text">
+            <h3>Get to Know the Founder</h3>
+            <p>
+              Hi! I'm <span class="highlight">Mateo Flores</span>, and I'm from
+              <span class="highlight">Ecuador</span>. I had the incredible
+              opportunity to play four years of college tennis in the USA, an
+              experience that completely transformed my life both as a player
+              and as a person.
+            </p>
+            <p>
+              During my journey, I faced many challenges that international
+              student-athletes encounter - from adapting to different playing
+              styles and training methods, to navigating cultural differences
+              and academic pressures. I learned so much from these experiences,
+              and I realized how valuable it would be to have a platform where
+              international tennis players could share their stories and support
+              each other.
+            </p>
+            <p>
+              <span class="highlight">My goal</span> is to help other
+              international students have a better, smoother experience by
+              creating this community where we can learn from each other's
+              journeys, celebrate our victories, and support each other through
+              the challenges. Together, we're stronger! 🎾
+            </p>
+          </div>
+        </div>
+      </section>
+      <% } %>
+
+      <!-- Community Call-to-Action -->
+      <section class="community-cta">
+        <div class="cta-content">
+          <h3>Join a Community Where We Support Each Other to Get Better</h3>
+          <p>
+            Connect with fellow tennis players, share your insights, and learn
+            from diverse experiences. Together, we're stronger both on and off
+            the court.
+          </p>
+
+          <% if (!user) { %>
+          <div class="cta-buttons">
+            <a href="/register" class="cta-button primary"
+              >Join Our Community</a
+            >
+            <a href="/login" class="cta-button secondary"
+              >Already a Member? Log In</a
+            >
+          </div>
+          <p class="login-prompt">
+            <strong>Ready to contribute?</strong> Register or log in to share
+            your experiences and respond to others.
+          </p>
+          <% } else { %>
+          <div class="cta-buttons">
+            <a href="/submit" class="cta-button primary"
+              >Share Your Experience</a
+            >
+            <a href="/profile" class="cta-button secondary"
+              >View Your Profile</a
+            >
+          </div>
+          <% } %>
+        </div>
+      </section>
+
+      <!-- Recent Experiences Section -->
+      <section class="experiences-section">
+        <h2>Recent Experiences from Our Community</h2>
+
+        <% if (experiences.length === 0) { %>
+        <div class="no-experiences">
+          <p>
+            No experiences shared yet. <% if (user) { %><a href="/submit"
+              >Be the first to share your story!</a
+            ><% } else { %><a href="/register">Register</a> to start sharing and
+            building our community!<% } %>
+          </p>
+        </div>
+        <% } else { %>
+
+        <!-- Show limited experiences message for non-logged-in users -->
+        <% if (!user && experiences.length > 3) { %>
+        <div class="limited-experiences-message">
+          <h4>📚 Showing 2 Most Recent Experiences</h4>
+          <p>
+            There are <strong><%= experiences.length %></strong> total
+            experiences in our community! Sign in or register to see all
+            experiences and join the conversation.
+          </p>
+          <div>
+            <a href="/login" class="see-more-btn">Sign In to See More</a>
+            <a href="/register" class="see-more-btn secondary"
+              >Register for Free</a
+            >
+          </div>
+        </div>
+        <% } %>
+
+        <ul class="experiences-list">
+          <% // Show only 2 most recent experiences if user is not logged in
+          const displayedExperiences = !user && experiences.length > 2 ?
+          experiences.slice(0, 2) : experiences; %> <%
+          displayedExperiences.forEach(exp => { %>
+          <li class="experience-card">
+            <div class="experience-header">
+              <div class="author-info">
+                <strong><%= exp.author %></strong>
+                <% if (exp.user_username && exp.first_name) { %> (<%=
+                exp.first_name %> <%= exp.last_name %>) <% } %>
+                <span class="category-badge"><%= exp.category %></span>
+              </div>
+              <div class="experience-meta">
+                <small>Posted on <%= exp.added.toLocaleString() %></small>
+                <% if (exp.university) { %>
+                <small>From: <%= exp.university %></small>
+                <% } %>
+              </div>
+            </div>
+
+            <div class="experience-content">
+              <p><%= exp.text %></p>
+            </div>
+
+            <!-- Responses Section -->
+            <div class="responses-section">
+              <h4>Community Responses (<%= exp.responses.length %>):</h4>
+              <% if (exp.responses.length > 0) { %>
+              <ul class="responses-list">
+                <% exp.responses.forEach(response => { %>
+                <li class="response-item">
+                  <div class="response-header">
+                    <strong><%= response.author %></strong>
+                    <% if (response.user_username && response.first_name) { %>
+                    (<%= response.first_name %> <%= response.last_name %>) <% }
+                    %>
+                    <small
+                      >Posted on <%= response.added.toLocaleString() %></small
+                    >
+                  </div>
+                  <p><%= response.text %></p>
+                </li>
+                <% }) %>
+              </ul>
+              <% } else { %>
+              <p class="no-responses">
+                No responses yet. Be the first to share your thoughts!
+              </p>
+              <% } %>
+
+              <!-- Response Form - Only show if user is logged in -->
+              <% if (user) { %>
+              <button class="toggle-response-form response-btn">Reply</button>
+              <form class="response-form" action="/responses" method="POST">
+                <input
+                  type="hidden"
+                  name="experience_id"
+                  value="<%= exp.id %>"
+                />
+                <label for="responseText">Your Response:</label>
+                <textarea
+                  id="responseText"
+                  name="responseText"
+                  required
+                  placeholder="Share your thoughts, advice, or similar experiences..."
+                ></textarea>
+                <button type="submit">Submit Response</button>
+              </form>
+              <% } else { %>
+              <div class="login-to-respond">
+                <p>
+                  <strong>Want to respond?</strong>
+                  <a href="/login">Login</a> or
+                  <a href="/register">create an account</a> to join the
+                  conversation and help fellow tennis players.
+                </p>
+              </div>
+              <% } %>
+            </div>
+          </li>
+          <% }) %>
+        </ul>
+        <% } %>
+      </section>
+
+      <!-- Community Call-to-Action -->
+      <section class="community-cta">
+        <div class="cta-content">
+          <h3>Ready to Share Your Tennis Story?</h3>
+          <p>
+            Join our community and help fellow international tennis players
+            navigate their journey in American college tennis.
+          </p>
+
+          <% if (!user) { %>
+          <div class="cta-buttons">
+            <a href="/register" class="cta-button primary"
+              >Join Our Community</a
+            >
+            <a href="/login" class="cta-button secondary"
+              >Already a Member? Log In</a
+            >
+          </div>
+          <p class="login-prompt">
+            <strong>Ready to contribute?</strong> Register or log in to share
+            your experiences and respond to others.
+          </p>
+          <% } else { %>
+          <div class="cta-buttons">
+            <a href="/submit" class="cta-button primary"
+              >Share Your Experience</a
+            >
+            <a href="/profile" class="cta-button secondary"
+              >View Your Profile</a
+            >
+          </div>
+          <% } %>
+        </div>
+      </section>
     </main>
+
     <footer>
-      <p>&copy; 2025 Tennis Experience Board</p>
+      <p>
+        &copy; 2025 Tennis Experience Board - Connecting International Tennis
+        Players
+      </p>
     </footer>
 
     <script>
       //Script to toggle the response form visibility
       document.querySelectorAll(".toggle-response-form").forEach((button) => {
         button.addEventListener("click", function () {
-          const form = this.nextElementSibling; // Get the next sibling (the form)
+          const form = this.nextElementSibling;
           if (form.style.display === "none" || form.style.display === "") {
-            form.style.display = "block"; // Show the form
-            this.textContent = "Hide"; // Change button text to "Hide"
+            form.style.display = "block";
+            this.textContent = "Cancel";
+            this.classList.add("active");
           } else {
-            form.style.display = "none"; // Hide the form
-            this.textContent = "Reply"; // Change button text back to "Reply"
+            form.style.display = "none";
+            this.textContent = "Reply";
+            this.classList.remove("active");
           }
         });
       });
@@ -89,10 +492,10 @@
       // Hide the response form after submission
       document.querySelectorAll(".response-form").forEach((form) => {
         form.addEventListener("submit", function (event) {
-          // Hide the form after submission
-          this.style.display = "none"; // Hide the form
-          const button = this.previousElementSibling; // Get the toggle button
-          button.textContent = "Reply"; // Change button text back to "Reply"
+          this.style.display = "none";
+          const button = this.previousElementSibling;
+          button.textContent = "Reply";
+          button.classList.remove("active");
         });
       });
     </script>

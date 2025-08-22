@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <title>Login - Tennis Experience Board</title>
+  </head>
+  <body>
+    <header>
+      <img src="/images/raider-flag.png" alt="Raider Logo" />
+      <h1>Login to Tennis Experience Board</h1>
+      <nav>
+        <a href="/">Home</a>
+        <% if (user) { %>
+        <a href="/submit">Submit Experience</a>
+        <a href="/profile">My Profile</a>
+        <span style="color: white; margin-right: 1rem"
+          >Welcome, <%= user.username %>!</span
+        >
+        <form action="/logout" method="POST" style="display: inline">
+          <button
+            type="submit"
+            style="
+              background: #a80000;
+              border: 1px solid white;
+              color: white;
+              padding: 0.5rem 1rem;
+              cursor: pointer;
+              border-radius: 4px;
+              margin-bottom: 2rem;
+            "
+          >
+            Logout
+          </button>
+        </form>
+        <% } else { %>
+        <a href="/login">Login</a>
+        <a href="/register">Register</a>
+        <% } %>
+      </nav>
+    </header>
+    <main>
+      <!-- Success Message -->
+      <% if (typeof success !== 'undefined' && success) { %>
+      <div class="success-message">
+        <p><%= success %></p>
+      </div>
+      <% } %>
+
+      <!-- Error Message -->
+      <% if (typeof error !== 'undefined' && error) { %>
+      <div class="error-message">
+        <p><%= error %></p>
+      </div>
+      <% } %>
+
+      <form action="/login" method="POST">
+        <h2 style="text-align: center; color: #a80000; margin-bottom: 2rem">
+          Welcome Back!
+        </h2>
+
+        <label for="username">Username or Email:</label>
+        <input
+          type="text"
+          id="username"
+          name="username"
+          required
+          placeholder="Enter your username or email"
+          autocomplete="username"
+        />
+
+        <label for="password">Password:</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          required
+          placeholder="Enter your password"
+          autocomplete="current-password"
+        />
+
+        <button type="submit">Login</button>
+      </form>
+
+      <div class="auth-links">
+        <p class="auth-link">
+          Don't have an account? <a href="/register">Register here</a>
+        </p>
+        <p class="auth-link">
+          <a href="/">← Back to Home</a>
+        </p>
+      </div>
+    </main>
+    <footer>
+      <p>
+        &copy; 2025 Tennis Experience Board - Connecting International Tennis
+        Players
+      </p>
+    </footer>
+
+    <script>
+      // Add some basic form validation
+      document.querySelector("form").addEventListener("submit", function (e) {
+        const username = document.getElementById("username").value.trim();
+        const password = document.getElementById("password").value;
+
+        if (!username || !password) {
+          e.preventDefault();
+          alert("Please fill in all fields.");
+          return false;
+        }
+
+        if (password.length < 3) {
+          e.preventDefault();
+          alert("Password is too short.");
+          return false;
+        }
+      });
+    </script>
+  </body>
+</html>
