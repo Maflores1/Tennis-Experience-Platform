@@ -596,6 +596,16 @@ footer p {
     .hero-content h2 {
         font-size: 2rem;
     }
+
+    .hero-main-content {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .journey-section,
+    .mission-section {
+        text-align: center;
+    }
     
     .hero-description {
         font-size: 1rem;
@@ -606,12 +616,15 @@ footer p {
         align-items: flex-start;
     }
     
+    .experiences-section {
+    max-width: 1000px;
+    margin: 3rem auto;
+    }
     .experience-meta {
         text-align: left;
     }
     
     .cta-buttons {
-        flex-direction: column;
         align-items: center;
     }
     
