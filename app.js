@@ -41,6 +41,7 @@ app.use(passport.session());
 // PostgreSQL connection pool setup
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false }
 });
 
 // Test database connection

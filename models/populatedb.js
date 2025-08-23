@@ -14,10 +14,11 @@ async function hashPassword(password) {
 async function main() {
   console.log("seeding..."); // Log a message indicating the seeding process has started
 
-  // Use environment variable for better security, fallback to your hardcoded string for development
-  const pool = new Pool({
-    connectionString: process.env.DATABASE_URL
-  });
+// Use environment variable for better security, fallback to your hardcoded string for development
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false }
+});
   
   try {
     // First, create the users table if it doesn't exist
