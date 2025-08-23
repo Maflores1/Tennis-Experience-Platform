@@ -38,6 +38,36 @@ const pool = new Pool({
     await pool.query(createUsersTableSQL);
     console.log("Users table created/verified successfully");
 
+    // Create tennis table if it doesn't exist
+  const createTennisTableSQL = `
+  CREATE TABLE IF NOT EXISTS tennis (
+    id SERIAL PRIMARY KEY,
+    author VARCHAR(100) NOT NULL,
+    text TEXT NOT NULL,
+    category VARCHAR(50),
+    added TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    user_id INTEGER REFERENCES users(id)
+  );
+  `;
+
+  await pool.query(createTennisTableSQL);
+  console.log("Tennis table created/verified successfully");
+
+  // Create responses table if it doesn't exist  
+  const createResponsesTableSQL = `
+  CREATE TABLE IF NOT EXISTS responses (
+    id SERIAL PRIMARY KEY,
+    experience_id INTEGER REFERENCES tennis(id) ON DELETE CASCADE,
+    author VARCHAR(100) NOT NULL,
+    text TEXT NOT NULL,
+    added TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    user_id INTEGER REFERENCES users(id)
+  );
+  `;
+
+await pool.query(createResponsesTableSQL);
+console.log("Responses table created/verified successfully");
+
     // Check if user_id column exists in tennis table, if not add it
     const checkTennisColumn = await pool.query(`
       SELECT column_name 
