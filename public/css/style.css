@@ -623,6 +623,10 @@ footer p {
     .experience-meta {
         text-align: left;
     }
+
+    .raider-logo {
+        display: none;
+    }
     
     .cta-buttons {
         align-items: center;
